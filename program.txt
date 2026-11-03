@@ -1,0 +1,25 @@
+
+    li   t0,  0x0583    
+    li   t1, 0        
+    sw   t0, 0(t1)    
+
+    lw   t2, 0(t1)     
+    li   t3, 0          
+
+counter:
+    beq  t2, x0, result
+    addi t4, t2, -1
+    and  t2, t2, t4
+    addi t3, t3, 1
+    j    counter
+
+result:
+    li   t4, 1
+    sll  t4, t4, t3
+    addi t4, t4, -1      # t4 = (1 << N) - 1
+
+    li   t5, 4         
+    sw   t4, 0(t5)     
+
+end:
+    j    end

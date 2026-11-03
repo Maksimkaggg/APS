@@ -1,0 +1,10 @@
+.DS_Store
+.vscode/
+build/
+Debug/
+Release/
+*.o
+*.elf
+*.hex
+*.bin
+*.log
