@@ -73,8 +73,8 @@ always_comb begin
             if (funct3 != 3'b000) illegal_instr_o = 1'b1;
             end
     
-    
-    
+
+
             OP_IMM_OPCODE: begin
                 gpr_we_o = 1'b1;
                 a_sel_o = OP_A_RS1;

@@ -16,7 +16,7 @@ logic [31:0] ram [DATA_MEM_SIZE_WORDS];
 
 
 
-always_ff @( posedge clk_i ) begin 
+always_ff @( posedge clk_i ) begin
     ready_o <= 1'b0;
     if (mem_req_i) begin
         if (write_enable_i) begin
