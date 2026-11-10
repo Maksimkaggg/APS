@@ -30,7 +30,7 @@ always_comb
         ALU_SRL: result_o = a_i >> b_i[4:0];
         ALU_SLL: result_o = a_i << b_i[4:0];
         ALU_SLTS: result_o = $signed(a_i) < $signed(b_i);
-        ALU_SLTU: result_o = a_i < b_i;       
+        ALU_SLTU: result_o = a_i < b_i;
         default: result_o = 32'b0;
     endcase
 
