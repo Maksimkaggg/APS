@@ -11,8 +11,7 @@ module processor_system (
     input logic kdata_i, // Сигнал данных клавиатуры
 
     output logic [6:0] hex_led_o,  // Вывод семисегментных индикаторов
-    output logic [7:0]
-        hex_sel_o,  // Селектор семисегментных индикаторов
+    output logic [7:0] hex_sel_o,  // Селектор семисегментных индикаторов
 
     input  logic rx_i,  // Линия приёма по UART
     output logic tx_o,  // Линия передачи по UART
@@ -20,10 +19,8 @@ module processor_system (
     output logic [3:0] vga_r_o,  // Красный канал vga
     output logic [3:0] vga_g_o,  // Зелёный канал vga
     output logic [3:0] vga_b_o,  // Синий канал vga
-    output logic
-        vga_hs_o,  // Линия горизонтальной синхронизации vga
+    output logic       vga_hs_o,  // Линия горизонтальной синхронизации vga
     output logic vga_vs_o  // Линия вертикальной синхронизации vga
-
 );
 
   logic sysclk, rst;
@@ -43,8 +40,6 @@ module processor_system (
   instr_mem instr_mem_unit (
       .read_addr_i(instr_addr),
       .read_data_o(instr)
-
-
   );
 
 
@@ -100,18 +95,94 @@ module processor_system (
       .mem_rd_i    (mem_rd),
       .mem_ready_i (mem_ready)
   );
+  localparam DATA_MEM = 8'h0;
+  localparam PS2 = 8'h03;
+  localparam VGA = 8'h07;
 
 
+  logic data_mem_req;
+  logic vga_req;
+  logic ps2_req;
+  always_comb begin
+    data_mem_req = '0;
+    vga_req      = '0;
+    ps2_req      = '0;
+    case (mem_addr[31:24])
+      DATA_MEM: data_mem_req = mem_req;
+      PS2:      ps2_req = mem_req;
+      VGA:      vga_req = mem_req;
+      default: begin
+        data_mem_req = '0;
+        vga_req      = '0;
+        ps2_req      = '0;
+      end
+    endcase
+  end
+
+  logic [31:0] data_mem_rd;
+  logic [31:0] vga_rd;
+  logic [31:0] ps2_rd;
+  always_comb begin
+    data_mem_rd = '0;
+    vga_rd      = '0;
+    ps2_rd      = '0;
+    case (mem_addr[31:24])
+      DATA_MEM: mem_rd = data_mem_rd;
+      PS2:      mem_rd = ps2_rd;
+      VGA:      mem_rd = vga_rd;
+      default:  mem_rd = '0;
+    endcase
+  end
 
   data_mem data_mem_unit (
       .clk_i         (sysclk),
-      .mem_req_i     (mem_req),
+      .mem_req_i     (data_mem_req),
       .write_enable_i(mem_we),
       .byte_enable_i (mem_be),
       .addr_i        (mem_addr),
       .write_data_i  (mem_wd),
-      .read_data_o   (mem_rd),
+      .read_data_o   (data_mem_rd),
       .ready_o       (mem_ready)
   );
+
+
+  ps2_sb_ctrl unit_ps2_sb_ctrl (
+      .addr_i(mem_addr),
+      .clk_i(sysclk),
+      .interrupt_request_o(irq_req),
+      .interrupt_return_i(irq_ret),
+      .kclk_i(kclk_i),
+      .kdata_i(kdata_i),
+      .read_data_o(ps2_rd),
+      .req_i(ps2_req),
+      .rst_i(rst),
+      .write_data_i(mem_wd),
+      .write_enable_i(mem_we)
+  );
+
+  vga_sb_ctrl unit_vga_sb_ctrl (
+      .addr_i(mem_addr),
+      .clk100m_i(clk_i),
+      .clk_i(sysclk),
+      .mem_be_i(mem_be),
+      .read_data_o(vga_rd),
+      .req_i(vga_req),
+      .rst_i(rst),
+      .vga_b_o(vga_b_o),
+      .vga_g_o(vga_g_o),
+      .vga_hs_o(vga_hs_o),
+      .vga_r_o(vga_r_o),
+      .vga_vs_o(vga_vs_o),
+      .write_data_i(mem_wd),
+      .write_enable_i(mem_we)
+  );
+
+
+
+
+
+
+
+
 
 endmodule

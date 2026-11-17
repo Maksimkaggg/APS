@@ -14,7 +14,9 @@ module data_mem
 
   logic [31:0] ram[DATA_MEM_SIZE_WORDS];
 
-
+  initial begin
+    $readmemh("lab_13_ps2_ascii_data.mem", ram);
+  end
 
   always_ff @(posedge clk_i) begin
     ready_o <= 1'b0;
@@ -28,17 +30,11 @@ module data_mem
           ram[addr_i[$clog2(DATA_MEM_SIZE_BYTES)-1:2]][23:16] <= write_data_i[23:16];
         if (byte_enable_i[3])
           ram[addr_i[$clog2(DATA_MEM_SIZE_BYTES)-1:2]][31:24] <= write_data_i[31:24];
-      end
-      else begin
+      end else begin
         read_data_o <= ram[addr_i[$clog2(DATA_MEM_SIZE_BYTES)-1:2]];
         ready_o     <= 1'b1;
       end
     end
   end
-
-
-
-
-
 
 endmodule
