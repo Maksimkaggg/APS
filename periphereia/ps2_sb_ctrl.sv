@@ -46,9 +46,9 @@ module ps2_sb_ctrl (
   logic is_read_flag_scan_code_is_unrd;
   logic is_write_rst;
 
-  assign is_read_scan_code = (addr_i == '0) ? 1'd1 : 1'd0;
-  assign is_read_flag_scan_code_is_unrd = (addr_i == 32'h4) ? 1'd1 : 1'd0;
-  assign is_write_rst = (addr_i == 32'h24) ? 1'd1 : 1'd0;
+  assign is_read_scan_code = (addr_i[23:0] == '0) ? 1'd1 : 1'd0;
+  assign is_read_flag_scan_code_is_unrd = (addr_i[23:0] == 24'h4) ? 1'd1 : 1'd0;
+  assign is_write_rst = (addr_i[23:0] == 24'h24) ? 1'd1 : 1'd0;
 
   assign rst = rst_i | (is_write_rst & req_i & (write_data_i == 32'd1) & write_enable_i);
 

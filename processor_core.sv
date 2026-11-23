@@ -14,11 +14,12 @@ module processor_core (
     output logic [31:0] mem_wd_o,
     output logic [15:0] irq_ret_o
 );
+  import decoder_pkg::*;
   // константы
   logic [31:0] imm_I;
   assign imm_I = {{20{instr_i[31]}}, instr_i[31:20]};
   logic [31:0] imm_U;
-  assign imm_U = {instr_i[31:20], {12{0}}};
+  assign imm_U = {instr_i[31:20], {20{1'b0}}};
   logic [31:0] imm_S;
   assign imm_S = {{20{instr_i[31]}}, instr_i[31:25], instr_i[11:7]};
   logic [31:0] imm_B;
@@ -33,18 +34,20 @@ module processor_core (
   logic [2:0] b_sel;
   logic [4:0] alu_op;
   logic       gpr_we;
-  logic       wb_sel;
+  logic [1:0] wb_sel;
   logic       mem_req;
   logic       trap;
   logic       branch;
   logic       jal;
   logic       jalr;
-  logic       csr_op;
+  logic [1:0] csr_op;
   logic       csr_we;
   logic       illegal_instr;
   logic       mem_we;
-  logic       mem_size;
+  logic [2:0] mem_size;
   logic       mret;
+  logic       irq;
+
 
   assign mem_req_o  = mem_req & ~trap;
   assign mem_we_o   = mem_we & ~trap;
@@ -86,6 +89,8 @@ module processor_core (
   logic [31:0] mux_jalr;
   logic [31:0] mux_trap;
   logic [31:0] mux_mret;
+  logic [31:0] rd1;
+
   // jalr
   logic [31:0] result_summ_jalr;
   assign result_summ_jalr = rd1 + imm_I;
@@ -111,7 +116,6 @@ module processor_core (
   // АЛУ
   logic [31:0] a;
   logic [31:0] b;
-  logic [31:0] rd1;
   logic [31:0] rd2;
   logic [31:0] result_ALU;
 
@@ -186,7 +190,6 @@ module processor_core (
   //IRQ
   logic [31:0] mie;
   logic [31:0] cause;
-  logic        irq;
   interrupt_controller unit_interrupt (
       .clk_i(clk_i),
       .rst_i(rst_i),

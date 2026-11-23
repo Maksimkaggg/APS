@@ -27,13 +27,11 @@ module processor_system (
   sys_clk_rst_gen divider (
       .ex_clk_i     (clk_i),
       .ex_areset_n_i(resetn_i),
-      .div_i        (5),
+      .div_i        (4'd5),
       .sys_clk_o    (sysclk),
       .sys_reset_o  (rst)
   );
 
-  logic [15:0] irq_req;
-  logic [15:0] irq_ret;
   logic [31:0] instr_addr;
   logic [31:0] instr;
 
@@ -47,7 +45,7 @@ module processor_system (
   logic [31:0] core_addr;
   logic [31:0] core_wd;
   logic [31:0] core_rd;
-  logic [ 3:0] core_size;
+  logic [ 2:0] core_size;
   logic        stall;
   logic        core_req;
   logic [15:0] irq_req;
@@ -123,9 +121,6 @@ module processor_system (
   logic [31:0] vga_rd;
   logic [31:0] ps2_rd;
   always_comb begin
-    data_mem_rd = '0;
-    vga_rd      = '0;
-    ps2_rd      = '0;
     case (mem_addr[31:24])
       DATA_MEM: mem_rd = data_mem_rd;
       PS2:      mem_rd = ps2_rd;
@@ -149,8 +144,8 @@ module processor_system (
   ps2_sb_ctrl unit_ps2_sb_ctrl (
       .addr_i(mem_addr),
       .clk_i(sysclk),
-      .interrupt_request_o(irq_req),
-      .interrupt_return_i(irq_ret),
+      .interrupt_request_o(irq_req[3]),
+      .interrupt_return_i(irq_ret[3]),
       .kclk_i(kclk_i),
       .kdata_i(kdata_i),
       .read_data_o(ps2_rd),
