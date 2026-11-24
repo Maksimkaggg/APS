@@ -1,12 +1,13 @@
 `timescale 1ns / 1ps
-module register_file (
-    input logic clk_i,
-    input logic write_enable_i,
+module register_file(
+  input  logic        clk_i,
+  input  logic        write_enable_i,
 
-    input logic [ 4:0] write_addr_i,
-    input logic [ 4:0] read_addr1_i,
-    input logic [ 4:0] read_addr2_i,
-    input logic [31:0] write_data_i,
+  input  logic [ 4:0] write_addr_i,
+  input  logic [ 4:0] read_addr1_i,
+  input  logic [ 4:0] read_addr2_i,
+
+  input  logic [31:0] write_data_i,
 
     output logic [31:0] read_data1_o,
     output logic [31:0] read_data2_o

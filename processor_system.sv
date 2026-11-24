@@ -32,6 +32,8 @@ module processor_system (
       .sys_reset_o  (rst)
   );
 
+  logic [15:0] irq_req;
+  logic [15:0] irq_ret;
   logic [31:0] instr_addr;
   logic [31:0] instr;
 
@@ -48,8 +50,6 @@ module processor_system (
   logic [ 2:0] core_size;
   logic        stall;
   logic        core_req;
-  logic [15:0] irq_req;
-  logic [15:0] irq_ret;
   processor_core core (
       .clk_i       (sysclk),
       .rst_i       (rst),
@@ -139,21 +139,13 @@ module processor_system (
       .read_data_o   (data_mem_rd),
       .ready_o       (mem_ready)
   );
-
-  assign irq_req[0] = 1'b0;
-  assign irq_req[1] = 1'b0;
-  assign irq_req[2] = 1'b0;
-  assign irq_req[4] = 1'b0;
-  assign irq_req[5] = 1'b0;
-  assign irq_req[6] = 1'b0;
-  assign irq_req[7] = 1'b0;
-  assign irq_req[14:8] = '0;
-
+logic ps2_irq;
+assign irq_req = {15'b0, ps2_irq};
   ps2_sb_ctrl unit_ps2_sb_ctrl (
       .addr_i(mem_addr),
       .clk_i(sysclk),
-      .interrupt_request_o(irq_req[3]),
-      .interrupt_return_i(irq_ret[3]),
+      .interrupt_request_o(ps2_irq),
+      .interrupt_return_i(irq_ret[0]),
       .kclk_i(kclk_i),
       .kdata_i(kdata_i),
       .read_data_o(ps2_rd),
@@ -179,13 +171,5 @@ module processor_system (
       .write_data_i(mem_wd),
       .write_enable_i(mem_we)
   );
-
-
-
-
-
-
-
-
 
 endmodule

@@ -23,9 +23,9 @@ module processor_core (
   logic [31:0] imm_S;
   assign imm_S = {{20{instr_i[31]}}, instr_i[31:25], instr_i[11:7]};
   logic [31:0] imm_B;
-  assign imm_B = {{20{instr_i[31]}}, instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0};
+  assign imm_B = {{19{instr_i[31]}}, instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0};
   logic [31:0] imm_J;
-  assign imm_J = {{12{instr_i[31]}}, instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0};
+  assign imm_J = {{11{instr_i[31]}}, instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0};
   logic [31:0] imm_Z;
   assign imm_Z = {27'b0, instr_i[19:15]};
 
@@ -40,14 +40,16 @@ module processor_core (
   logic       branch;
   logic       jal;
   logic       jalr;
-  logic [1:0] csr_op;
+  logic [2:0] csr_op;
   logic       csr_we;
   logic       illegal_instr;
   logic       mem_we;
   logic [2:0] mem_size;
   logic       mret;
-  logic       irq;
+  logic [31:0] rd1;  
+  logic        irq;
 
+  
 
   assign mem_req_o  = mem_req & ~trap;
   assign mem_we_o   = mem_we & ~trap;
@@ -89,8 +91,6 @@ module processor_core (
   logic [31:0] mux_jalr;
   logic [31:0] mux_trap;
   logic [31:0] mux_mret;
-  logic [31:0] rd1;
-
   // jalr
   logic [31:0] result_summ_jalr;
   assign result_summ_jalr = rd1 + imm_I;
@@ -223,6 +223,5 @@ module processor_core (
   );
 
   assign mcause = (illegal_instr) ? 32'h0000_0002 : cause;
-
 
 endmodule
