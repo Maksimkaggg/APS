@@ -19,13 +19,13 @@ module processor_core (
   logic [31:0] imm_I;
   assign imm_I = {{20{instr_i[31]}}, instr_i[31:20]};
   logic [31:0] imm_U;
-  assign imm_U = {instr_i[31:20], {20{1'b0}}};
+  assign imm_U = {instr_i[31:12], {12{1'b0}}};
   logic [31:0] imm_S;
   assign imm_S = {{20{instr_i[31]}}, instr_i[31:25], instr_i[11:7]};
   logic [31:0] imm_B;
-  assign imm_B = {{19{instr_i[31]}}, instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0};
+  assign imm_B = {{20{instr_i[31]}}, instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0};
   logic [31:0] imm_J;
-  assign imm_J = {{11{instr_i[31]}}, instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0};
+  assign imm_J = {{12{instr_i[31]}}, instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0};
   logic [31:0] imm_Z;
   assign imm_Z = {27'b0, instr_i[19:15]};
 
@@ -195,7 +195,7 @@ module processor_core (
       .rst_i(rst_i),
       .exception_i(illegal_instr),
       .irq_req_i(irq_req_i),
-      .mie_i(mie[15:0]),
+      .mie_i(mie[31:16]),
       .mret_i(mret),
       .irq_ret_o(irq_ret_o),
       .irq_cause_o(cause),

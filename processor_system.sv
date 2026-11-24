@@ -140,6 +140,14 @@ module processor_system (
       .ready_o       (mem_ready)
   );
 
+  assign irq_req[0] = 1'b0;
+  assign irq_req[1] = 1'b0;
+  assign irq_req[2] = 1'b0;
+  assign irq_req[4] = 1'b0;
+  assign irq_req[5] = 1'b0;
+  assign irq_req[6] = 1'b0;
+  assign irq_req[7] = 1'b0;
+  assign irq_req[14:8] = '0;
 
   ps2_sb_ctrl unit_ps2_sb_ctrl (
       .addr_i(mem_addr),

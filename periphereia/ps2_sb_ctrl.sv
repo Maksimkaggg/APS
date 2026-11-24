@@ -60,18 +60,7 @@ module ps2_sb_ctrl (
     end
   end
 
-
-  always_ff @(posedge clk_i) begin
-    if (rst) begin
-      scan_code_is_unread <= '0;
-    end else if (keycode_valid) begin
-      scan_code_is_unread <= 'd1;
-    end else if (req_i & ~write_enable_i & is_read_scan_code) begin
-      scan_code_is_unread <= '0;
-    end else if (interrupt_return_i) begin
-      scan_code_is_unread <= '0;
-    end
-  end
+  assign interrupt_request_o = scan_code_is_unread;
 
 
   always_comb begin
